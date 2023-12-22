@@ -1,23 +1,14 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { ThemeProvider } from "styled-components";
+import { NavigationContainer } from "@react-navigation/native";
+import Routes from "./src/routes";
+import theme from "./src/shared/theme";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Hello Emulador</Text>
-      <StatusBar style="light" />
-    </View>
+    <ThemeProvider theme={theme}>
+      <NavigationContainer>
+        <Routes />
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title:{
-    color: '#ffff'
-  }
-});
