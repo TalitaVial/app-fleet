@@ -42,3 +42,23 @@ export const ButtonLogin = styled(Button)`
     margin-top: 20px;
 
 `;
+
+export const CreateAccountContainer = styled.View`
+    padding: 0 30px;
+    gap: 15px;
+    flex: 1;
+    justify-content: flex-end;
+    margin-bottom: 28px;
+`;
+
+export const ButtonCreateAccount = styled(Button)`
+`;
+
+export const TitleCreateAccount = styled.Text`
+    color: ${({theme})=> theme.colors.gray_100};
+    font-size: ${({theme})=> theme.font_size.lg};
+    font-family: ${({theme})=> theme.font_family.regular};
+    text-align: center;
+  
+`;
+
