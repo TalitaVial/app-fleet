@@ -1,36 +1,31 @@
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { z } from 'zod';
 import loginBackground from "../../../../shared/assets/images/login-background.png";
 import { TextInputForm } from "../../../../shared/components/TextInputForm";
 import logo from "../../../../shared/assets/images/logo-and-slogan.png";
+import { PublicStackParamList } from "../../../../routes/public.routes";
+import { LoginSchema, loginSchema } from "./validation";
 import * as S from "./styles";
 
-const loginSchema = z.object({
-  email: z.string({
-    required_error: 'Email é obrigatório'
-  }).email({
-    message: 'Email é inválido'
-  }),
-  password: z.string({
-    required_error: 'Senha é obrigatória'
-  }).min(6,{
-    message: 'É obrigatório no minímo de 6 caracteres'
-  })
-});
-
-type LoginSchema = z.infer<typeof loginSchema>;
+type LoginScreenProps = NativeStackNavigationProp<
+  PublicStackParamList,
+  "LoginScreen"
+>;
 
 export default function LoginScreen() {
+  
+  const {navigate} = useNavigation<LoginScreenProps>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { control, handleSubmit } = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema)
+    resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginSchema) =>{
-    console.log(data)
-  }
+  const onSubmit = (data: LoginSchema) => {
+    console.log(data);
+  };
 
   return (
     <S.ImageBackground source={loginBackground}>
@@ -42,22 +37,31 @@ export default function LoginScreen() {
       <S.FormContainer>
         <S.TitleForm>Acesse sua conta</S.TitleForm>
         <TextInputForm
-            control={control}
-            name="email"
-            label="E-mail"
-            keyboardType="email-address"
-         />
-         <TextInputForm
-            control={control}
-            name="password"
-            label="Senha"
-            secureTextEntry
-         />
-         <S.ButtonLogin  
-         isLoading={isLoading}
-         title="Entrar" 
-         onPress={handleSubmit(onSubmit)}/>
+          control={control}
+          name="email"
+          label="E-mail"
+          keyboardType="email-address"
+        />
+        <TextInputForm
+          control={control}
+          name="password"
+          label="Senha"
+          secureTextEntry
+        />
+        <S.ButtonLogin
+          isLoading={isLoading}
+          title="Entrar"
+          onPress={handleSubmit(onSubmit)}
+        />
       </S.FormContainer>
+      <S.CreateAccountContainer>
+        <S.TitleCreateAccount>Ainda não tem acesso?</S.TitleCreateAccount>
+        <S.ButtonCreateAccount
+          title="Criar conta"
+          type="outlined"
+          onPress={() => navigate('CreateAccountScreen')}
+        />
+      </S.CreateAccountContainer>
     </S.ImageBackground>
   );
 }
