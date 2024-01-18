@@ -1,3 +1,4 @@
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
@@ -5,16 +6,42 @@ import loginBackground from "../../../../shared/assets/images/login-background.p
 import { TextInputForm } from "../../../../shared/components/TextInputForm";
 import logo from "../../../../shared/assets/images/logo-and-slogan.png";
 import { CreateAccountSchema, createAccountSchema } from "./validation";
+import { registerService } from "../../../../shared/services/authService";
 import * as S from "./styles";
+import { useToastStore } from "../../../../shared/store/useToastStore";
+import { PublicStackParamList } from "../../../../routes/public.routes";
+import { useNavigation } from "@react-navigation/native";
+
+type CreateAccountScreenProps = NativeStackNavigationProp<
+  PublicStackParamList,
+  "CreateAccountScreen"
+>;
 
 export default function CreateAccountScreen(props: any) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const setMessage = useToastStore((state) => state.setMessage);
+  const {navigate} = useNavigation<CreateAccountScreenProps>();
   const { control, handleSubmit } = useForm<CreateAccountSchema>({
     resolver: zodResolver(createAccountSchema),
   });
 
-  const onSubmit = (data: CreateAccountSchema) => {
-    console.log(data);
+  const onSubmit = async (data: CreateAccountSchema) => {
+    try {
+      setIsLoading(true);
+      await registerService(data);
+      setMessage({
+        text: "Usuário criado com sucesso!",
+        type: "sucess",
+      });
+      navigate('LoginScreen');
+    } catch (error: any) {
+      setMessage({
+        text: error?.message,
+        type: "danger",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
