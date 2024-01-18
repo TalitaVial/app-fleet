@@ -9,6 +9,9 @@ import logo from "../../../../shared/assets/images/logo-and-slogan.png";
 import { PublicStackParamList } from "../../../../routes/public.routes";
 import { LoginSchema, loginSchema } from "./validation";
 import * as S from "./styles";
+import { getUserLoggedService, loginService } from "../../../../shared/services/authService";
+import { useAuthStore } from "../../../../shared/store/useAuthStore";
+import { useToastStore } from "../../../../shared/store/useToastStore";
 
 type LoginScreenProps = NativeStackNavigationProp<
   PublicStackParamList,
@@ -16,15 +19,40 @@ type LoginScreenProps = NativeStackNavigationProp<
 >;
 
 export default function LoginScreen() {
-  
-  const {navigate} = useNavigation<LoginScreenProps>();
+  const setToken = useAuthStore((state) => state.setToken);
+  const setUser = useAuthStore((state) => state.setUser);
+  const setMessage = useToastStore(state=> state.setMessage);
+  const { navigate } = useNavigation<LoginScreenProps>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { control, handleSubmit } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginSchema) => {
-    console.log(data);
+  const onSubmit = async (data: LoginSchema) => {
+   
+    try {
+      setIsLoading(true);
+      const response = await loginService(data);
+      setToken(response.token);
+      const userLogged = await getUserLoggedService();
+      setUser({
+        id: userLogged.id,
+        name: userLogged.name,
+        photo: userLogged.photo,
+      });
+
+      setMessage({
+        text: 'Login realizado com sucesso',
+        type: 'sucess'
+      })
+    } catch (error: any) {
+      setMessage({
+        text: error?.message,
+        type: 'danger'
+      })
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -59,7 +87,7 @@ export default function LoginScreen() {
         <S.ButtonCreateAccount
           title="Criar conta"
           type="outlined"
-          onPress={() => navigate('CreateAccountScreen')}
+          onPress={() => navigate("CreateAccountScreen")}
         />
       </S.CreateAccountContainer>
     </S.ImageBackground>
