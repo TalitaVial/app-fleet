@@ -10,6 +10,7 @@ import {
 import theme from "./src/shared/theme";
 import Routes from "./src/routes";
 import { Loading } from "./src/shared/components/Loading";
+import { Toast } from "./src/shared/components/Toast";
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -31,6 +32,7 @@ export default function App() {
           backgroundColor="transparent"
         />
         <Routes />
+        <Toast />
       </NavigationContainer>
     </ThemeProvider>
   );
